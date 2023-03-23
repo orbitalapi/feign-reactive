@@ -104,10 +104,10 @@ public class JettyReactiveHttpClient implements ReactiveHttpClient {
 
 	@Override
 	public Mono<ReactiveHttpResponse> executeRequest(ReactiveHttpRequest request) {
-		Request jettyRequest = httpClient.newRequest(request.uri()).method(request.method());
-
-//		jettyRequest.headers(httpFields -> setUpHeaders(request, httpFields));
-		setUpHeaders(request, jettyRequest.getHeaders());
+		Request jettyRequest = httpClient
+			.newRequest(request.uri())
+			.headers(httpFields -> setUpHeaders(request, httpFields))
+			.method(request.method());
 
 		if(requestTimeout > 0){
 			jettyRequest.timeout(requestTimeout, TimeUnit.MILLISECONDS);
@@ -139,7 +139,7 @@ public class JettyReactiveHttpClient implements ReactiveHttpClient {
 				});
 	}
 
-	protected void setUpHeaders(ReactiveHttpRequest request, HttpFields httpHeaders) {
+	protected void setUpHeaders(ReactiveHttpRequest request, HttpFields.Mutable httpHeaders) {
 		request.headers().forEach(httpHeaders::put);
 
 		String acceptHeader;
